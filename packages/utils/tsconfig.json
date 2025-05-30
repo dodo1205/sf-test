@@ -4,5 +4,8 @@
     "outDir": "dist",
     "rootDir": "src",
     "resolveJsonModule": true
-  }
+  },
+  "references": [
+    { "path": "../types/tsconfig.json" }
+  ]
 }
