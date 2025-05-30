@@ -4,7 +4,7 @@ import path from 'path';
 import { AIOStreams } from './addon.js';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config.js';
-import manifest from './manifest';
+import manifest from './manifest.js';
 import { errorResponse } from './responses';
 import {
   Settings,
