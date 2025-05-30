@@ -1,3 +1,7 @@
+// Note: Pour résoudre les erreurs de type, il est nécessaire d'installer les définitions de type pour Node.js.
+// Exécutez `npm install --save-dev @types/node` pour ajouter les types nécessaires pour 'crypto', 'zlib' et 'Buffer'.
+// Pour 'jsoncrush', si les types ne sont pas disponibles, une déclaration manuelle peut être nécessaire.
+
 import {
   randomBytes,
   createCipheriv,
@@ -6,7 +10,7 @@ import {
 } from 'crypto';
 import { deflateSync, inflateSync } from 'zlib';
 import { Settings } from './settings';
-import JSONCrush from 'jsoncrush';
+const JSONCrush = import('jsoncrush');
 import { createLogger } from './logger';
 
 const logger = createLogger('crypto');
@@ -49,12 +53,14 @@ const unpad = (data: Buffer): Buffer => {
   return data.subarray(0, data.length - padding);
 };
 
-export const crushJson = (data: string): string => {
-  return JSONCrush.crush(data);
+export const crushJson = async (data: string): Promise<string> => {
+  const module = await JSONCrush;
+  return module.crush(data);
 };
 
-export const uncrushJson = (data: string): string => {
-  return JSONCrush.uncrush(data);
+export const uncrushJson = async (data: string): Promise<string> => {
+  const module = await JSONCrush;
+  return module.uncrush(data);
 };
 
 export const compressData = (data: string): Buffer => {
