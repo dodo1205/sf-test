@@ -5,7 +5,7 @@ import { AIOStreams } from './addon.js';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config.js';
 import manifest from './manifest.js';
-import { errorResponse } from './responses';
+import { errorResponse } from './responses.js';
 import {
   Settings,
   addonDetails,
