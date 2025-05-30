@@ -149,11 +149,11 @@ app.get('/manifest.json', (req, res) => {
   res.status(200).json(manifest());
 });
 
-app.get('/:config/manifest.json', async (req, res) => {
+app.get('/:config/manifest.json', (req, res) => {
   const config = decodeURIComponent(req.params.config);
   let configJson: Config;
   try {
-    configJson = await extractJsonConfig(config);
+    configJson = extractJsonConfig(config);
     logger.info(`Extracted config for manifest request`);
     configJson = decryptEncryptedInfoFromConfig(configJson);
     if (Settings.LOG_SENSITIVE_INFO) {
@@ -189,11 +189,11 @@ app.get('/stream/:type/:id', (req: Request, res: Response) => {
     );
 });
 
-app.get('/:config/stream/:type/:id.json', async (req, res: Response): Promise<void> => {
+app.get('/:config/stream/:type/:id.json', (req, res: Response): void => {
   const { config, type, id } = req.params;
   let configJson: Config;
   try {
-    configJson = await extractJsonConfig(config);
+    configJson = extractJsonConfig(config);
     logger.info(`Extracted config for stream request`);
     configJson = decryptEncryptedInfoFromConfig(configJson);
     if (Settings.LOG_SENSITIVE_INFO) {
@@ -268,7 +268,7 @@ app.get('/:config/stream/:type/:id.json', async (req, res: Response): Promise<vo
   }
 });
 
-app.post('/encrypt-user-data', async (req, res) => {
+app.post('/encrypt-user-data', (req, res) => {
   const { data } = req.body;
   let finalString: string = '';
   if (!data) {
@@ -295,7 +295,7 @@ app.post('/encrypt-user-data', async (req, res) => {
 
   try {
     const minified = minifyConfig(JSON.parse(data));
-    const crushed = await crushJson(JSON.stringify(minified));
+    const crushed = crushJson(JSON.stringify(minified));
     const compressed = compressData(crushed);
     if (!Settings.SECRET_KEY) {
       // use base64 encoding if no secret key is set
@@ -366,14 +366,14 @@ function getIp(req: Request): string | undefined {
     req.ip
   );
 }
-async function extractJsonConfig(config: string): Promise<Config> {
+function extractJsonConfig(config: string): Config {
   if (
     config.startsWith('eyJ') ||
     config.startsWith('eyI') ||
     config.startsWith('B-') ||
     isValueEncrypted(config)
   ) {
-    return await extractEncryptedOrEncodedConfig(config, 'Config');
+    return extractEncryptedOrEncodedConfig(config, 'Config');
   }
   if (Settings.CUSTOM_CONFIGS) {
     const customConfig = extractCustomConfig(config);
@@ -382,22 +382,22 @@ async function extractJsonConfig(config: string): Promise<Config> {
   throw new Error('Config was in an unexpected format');
 }
 
-async function extractCustomConfig(config: string): Promise<Config | undefined> {
+function extractCustomConfig(config: string): Config | undefined {
   const customConfig = Settings.CUSTOM_CONFIGS[config];
   if (!customConfig) return undefined;
   logger.info(
     `Found custom config for alias ${config}, attempting to extract config`
   );
-  return await extractEncryptedOrEncodedConfig(
+  return extractEncryptedOrEncodedConfig(
     decodeURIComponent(customConfig),
     `CustomConfig ${config}`
   );
 }
 
-async function extractEncryptedOrEncodedConfig(
+function extractEncryptedOrEncodedConfig(
   config: string,
   label: string
-): Promise<Config> {
+): Config {
   let decodedConfig: Config;
   try {
     if (config.startsWith('E-')) {
@@ -421,14 +421,16 @@ async function extractEncryptedOrEncodedConfig(
       const data = Buffer.from(decodeURIComponent(parts[2]), 'base64');
       const compressedCrushedJson = decryptData(data, iv);
       const crushedJson = decompressData(compressedCrushedJson);
-      const minifiedConfig = await uncrushJson(crushedJson);
+      const minifiedConfig = uncrushJson(crushedJson);
       decodedConfig = unminifyConfig(JSON.parse(minifiedConfig));
     } else if (config.startsWith('B-')) {
       // minifed, crushed, compressed, base64 encoded
       logger.info(`Extracting base64 encoded and compressed config`);
-      const decompressed = decompressData(Buffer.from(config.slice(2), 'base64'));
-      const uncrushed = await uncrushJson(decompressed);
-      decodedConfig = unminifyConfig(JSON.parse(uncrushed));
+      decodedConfig = unminifyConfig(
+        JSON.parse(
+          uncrushJson(decompressData(Buffer.from(config.slice(2), 'base64')))
+        )
+      );
     } else {
       // plain base64 encoded
       logger.info(`Extracting plain base64 encoded config`);

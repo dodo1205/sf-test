@@ -1,7 +1,3 @@
-// Note: Pour résoudre les erreurs de type, il est nécessaire d'installer les définitions de type pour Node.js.
-// Exécutez `npm install --save-dev @types/node` pour ajouter les types nécessaires pour 'crypto', 'zlib' et 'Buffer'.
-// Pour 'jsoncrush', si les types ne sont pas disponibles, une déclaration manuelle peut être nécessaire.
-
 import {
   randomBytes,
   createCipheriv,
@@ -10,16 +6,7 @@ import {
 } from 'crypto';
 import { deflateSync, inflateSync } from 'zlib';
 import { Settings } from './settings';
-interface JSONCrushModule {
-  crush(data: string): string;
-  uncrush(data: string): string;
-  default?: {
-    crush(data: string): string;
-    uncrush(data: string): string;
-  };
-}
-
-const JSONCrush = import('jsoncrush') as Promise<JSONCrushModule>;
+import JSONCrush from 'jsoncrush';
 import { createLogger } from './logger';
 
 const logger = createLogger('crypto');
@@ -62,22 +49,12 @@ const unpad = (data: Buffer): Buffer => {
   return data.subarray(0, data.length - padding);
 };
 
-export const crushJson = async (data: string): Promise<string> => {
-  const module = await JSONCrush;
-  // Use type assertion to ensure TypeScript accepts the method
-  if (module.default && typeof module.default.crush === 'function') {
-    return module.default.crush(data);
-  }
-  return module.crush(data);
+export const crushJson = (data: string): string => {
+  return JSONCrush.crush(data);
 };
 
-export const uncrushJson = async (data: string): Promise<string> => {
-  const module = await JSONCrush;
-  // Use type assertion to ensure TypeScript accepts the method
-  if (module.default && typeof module.default.uncrush === 'function') {
-    return module.default.uncrush(data);
-  }
-  return module.uncrush(data);
+export const uncrushJson = (data: string): string => {
+  return JSONCrush.uncrush(data);
 };
 
 export const compressData = (data: string): Buffer => {

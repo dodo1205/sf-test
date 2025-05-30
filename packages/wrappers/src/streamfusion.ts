@@ -48,10 +48,10 @@ export class StreamFusion extends BaseWrapper {
   ) {
     super(
       addonName,
-      'https://stream-fusion.stremiofr.com/',
+      Settings.STREAMFUSION_URL,
       addonId,
       userConfig,
-      indexerTimeout || 15000
+      indexerTimeout || Settings.DEFAULT_STREAMFUSION_TIMEOUT
     );
     this.apiKey = apiKey;
     this.userConfigRef = userConfig;
@@ -191,7 +191,7 @@ export class StreamFusion extends BaseWrapper {
     
     // Construire la configuration
     const config = {
-      addonHost: 'https://stream-fusion.stremiofr.com/'.replace(/\/$/, ''),
+      addonHost: Settings.STREAMFUSION_URL.replace(/\/$/, ''),
       apiKey: this.apiKey,
       service: debridService ? [debridService.id === 'alldebrid' ? "AllDebrid" : debridService.name] : [],
       RDToken: "",
@@ -249,9 +249,9 @@ export class StreamFusion extends BaseWrapper {
     const { type, id } = streamRequest;
     
     // Construire l'URL avec la configuration encodée
-    const baseUrl = 'https://stream-fusion.stremiofr.com/'.endsWith('/')
-      ? 'https://stream-fusion.stremiofr.com/'.slice(0, -1)
-      : 'https://stream-fusion.stremiofr.com/';
+    const baseUrl = Settings.STREAMFUSION_URL.endsWith('/')
+      ? Settings.STREAMFUSION_URL.slice(0, -1)
+      : Settings.STREAMFUSION_URL;
     
     // Générer la configuration dynamiquement en fonction des paramètres de l'utilisateur
     const config = this.generateStreamFusionConfig();
