@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// @ts-ignore: Temporarily ignore TypeScript errors for missing modules
 'use client';
 
-// @ts-ignore: Ignore missing module error for react
 import { useState, useEffect } from 'react';
-// @ts-ignore: Ignore missing module error for next/image
 import Image from 'next/image';
-// @ts-ignore: Ignore missing module error for CSS module
 import styles from './page.module.css';
-// @ts-ignore: Ignore missing module error for @aiostreams/types
 import {
   Config,
   Resolution,
@@ -24,19 +19,15 @@ import {
 import SortableCardList from '../../components/SortableCardList';
 import ServiceInput from '../../components/ServiceInput';
 import AddonsList from '../../components/AddonsList';
-// @ts-ignore: Ignore missing module error for react-toastify
 import { Slide, ToastContainer, toast } from 'react-toastify';
-// import showToast, { toastOptions } from '@/components/Toasts'; // Commented out due to module not found error
+import showToast, { toastOptions } from '@/components/Toasts';
 import addonPackage from '../../../../../package.json';
-// @ts-ignore: Ignore missing module error for @aiostreams/formatters
 import { formatSize } from '@aiostreams/formatters';
-// @ts-ignore: Ignore missing module error for @aiostreams/config
 import {
   allowedFormatters,
   allowedLanguages,
   validateConfig,
 } from '@aiostreams/config';
-// @ts-ignore: Ignore missing module error for @aiostreams/utils
 import {
   addonDetails,
   isValueEncrypted,
@@ -44,19 +35,12 @@ import {
   Settings,
 } from '@aiostreams/utils';
 
-// @ts-ignore: Ignore missing module error for Slider component
 import Slider from '@/components/Slider';
-// @ts-ignore: Ignore missing module error for CredentialInput component
 import CredentialInput from '@/components/CredentialInput';
-// @ts-ignore: Ignore missing module error for CreateableSelect component
 import CreateableSelect from '@/components/CreateableSelect';
-// @ts-ignore: Ignore missing module error for MultiSelect component
 import MultiSelect from '@/components/MutliSelect';
-// @ts-ignore: Ignore missing module error for InstallWindow component
 import InstallWindow from '@/components/InstallWindow';
-// @ts-ignore: Ignore missing module error for FormatterPreview component
 import FormatterPreview from '@/components/FormatterPreview';
-// @ts-ignore: Ignore missing module error for CustomFormatter component
 import CustomFormatter from '@/components/CustomFormatter';
 
 const version = addonPackage.version;
@@ -1262,11 +1246,11 @@ export default function Configure() {
                     if (formatterOptions.includes('imposter')) {
                       return;
                     }
-                    // showToast(
-                    //   "What's this doing here....?",
-                    //   'info',
-                    //   'ImposterFormatter'
-                    // ); // Commented out due to module not found error
+                    showToast(
+                      "What's this doing here....?",
+                      'info',
+                      'ImposterFormatter'
+                    );
                     setFormatterOptions([...formatterOptions, 'imposter']);
                   }}
                 >

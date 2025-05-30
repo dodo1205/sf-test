@@ -37,9 +37,6 @@
     },
     {
       "path": "../utils"
-    },
-    {
-      "path": "../../node_modules/@types/node"
     }
   ],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
