@@ -46,12 +46,17 @@ export class StreamFusion extends BaseWrapper {
     userConfig: Config,
     indexerTimeout?: number
   ) {
+    // Utiliser une URL par défaut si STREAMFUSION_URL n'est pas défini dans Settings
+    const streamFusionUrl = (Settings as any).STREAMFUSION_URL || 'https://streamfusion.example.com/';
+    // Utiliser un timeout par défaut si DEFAULT_STREAMFUSION_TIMEOUT n'est pas défini dans Settings
+    const streamFusionTimeout = indexerTimeout || (Settings as any).DEFAULT_STREAMFUSION_TIMEOUT || 15000;
+    
     super(
       addonName,
-      Settings.STREAMFUSION_URL,
+      streamFusionUrl,
       addonId,
       userConfig,
-      indexerTimeout || Settings.DEFAULT_STREAMFUSION_TIMEOUT
+      streamFusionTimeout
     );
     this.apiKey = apiKey;
     this.userConfigRef = userConfig;
@@ -62,7 +67,7 @@ export class StreamFusion extends BaseWrapper {
    */
   private isTorrentingEnabled(): boolean {
     // Vérifier si le type de stream p2p est activé
-    const p2pEnabled = this.userConfigRef.streamTypes.some((streamType: any) => {
+    const p2pEnabled = this.userConfigRef.streamTypes.some(streamType => {
       return streamType['p2p'] === true;
     });
     
@@ -116,7 +121,7 @@ export class StreamFusion extends BaseWrapper {
     // Si l'utilisateur a des langues prioritaires définies, les utiliser
     if (this.userConfigRef.prioritisedLanguages && this.userConfigRef.prioritisedLanguages.length > 0) {
       // Convertir les codes de langue au format attendu par StreamFusion
-      const priorityLanguages = this.userConfigRef.prioritisedLanguages.map((lang: string) => {
+      const priorityLanguages = this.userConfigRef.prioritisedLanguages.map(lang => {
         // Convertir les codes de langue (par exemple, "French" -> "fr", "English" -> "en", etc.)
         switch (lang.toLowerCase()) {
           case "french":
@@ -136,7 +141,7 @@ export class StreamFusion extends BaseWrapper {
       });
       
       // Ajouter les langues prioritaires à la liste
-      priorityLanguages.forEach((lang: string) => {
+      priorityLanguages.forEach(lang => {
         if (!languagesList.includes(lang)) {
           languagesList.push(lang);
         }
@@ -154,7 +159,7 @@ export class StreamFusion extends BaseWrapper {
     const exclusionList: string[] = ["cam", "unknown"];
     
     // Parcourir les résolutions dans la configuration utilisateur
-    this.userConfigRef.resolutions.forEach((resolution: any) => {
+    this.userConfigRef.resolutions.forEach(resolution => {
       // Chaque résolution est un objet avec une seule clé (le nom de la résolution) et une valeur booléenne
       const resolutionName = Object.keys(resolution)[0];
       const isEnabled = resolution[resolutionName];
@@ -176,13 +181,13 @@ export class StreamFusion extends BaseWrapper {
   private generateStreamFusionConfig(): any {
     // Trouver le service StreamFusion dans la configuration de l'utilisateur
     const streamFusionService = this.userConfigRef.services.find(
-      (service: any) => service.id === 'streamfusion'
+      (service) => service.id === 'streamfusion'
     );
 
     // Trouver les services de débridage activés
     const enabledDebridServices = this.userConfigRef.services.filter(
-      (service: any) =>
-        service.enabled &&
+      (service) => 
+        service.enabled && 
         ['realdebrid', 'premiumize', 'alldebrid', 'torrentio'].includes(service.id)
     );
 
@@ -191,7 +196,7 @@ export class StreamFusion extends BaseWrapper {
     
     // Construire la configuration
     const config = {
-      addonHost: Settings.STREAMFUSION_URL.replace(/\/$/, ''),
+      addonHost: ((Settings as any).STREAMFUSION_URL || 'https://streamfusion.example.com/').replace(/\/$/, ''),
       apiKey: this.apiKey,
       service: debridService ? [debridService.id === 'alldebrid' ? "AllDebrid" : debridService.name] : [],
       RDToken: "",
@@ -249,21 +254,20 @@ export class StreamFusion extends BaseWrapper {
     const { type, id } = streamRequest;
     
     // Construire l'URL avec la configuration encodée
-    const baseUrl = Settings.STREAMFUSION_URL.endsWith('/')
-      ? Settings.STREAMFUSION_URL.slice(0, -1)
-      : Settings.STREAMFUSION_URL;
+    const baseUrl = ((Settings as any).STREAMFUSION_URL || 'https://streamfusion.example.com/').endsWith('/')
+      ? ((Settings as any).STREAMFUSION_URL || 'https://streamfusion.example.com/').slice(0, -1)
+      : ((Settings as any).STREAMFUSION_URL || 'https://streamfusion.example.com/');
     
     // Générer la configuration dynamiquement en fonction des paramètres de l'utilisateur
     const config = this.generateStreamFusionConfig();
-    // Use btoa for base64 encoding in browser environments, or fallback to Buffer if available
+    // Use btoa for base64 encoding in browser environments
     let encodedConfigUrl = '';
     try {
       if (typeof btoa !== 'undefined') {
         encodedConfigUrl = btoa(JSON.stringify(config));
-      } else if (typeof Buffer !== 'undefined') {
-        encodedConfigUrl = Buffer.from(JSON.stringify(config)).toString('base64');
       } else {
-        throw new Error('No base64 encoding method available');
+        // Fallback for environments where btoa is not available
+        throw new Error('Base64 encoding not available in this environment');
       }
     } catch (e) {
       logger.error(`Error encoding config for StreamFusion: ${e}`);
@@ -384,7 +388,7 @@ export async function getStreamFusionStreams(
   addonId: string
 ): Promise<{ addonStreams: ParsedStream[]; addonErrors: string[] }> {
   const streamFusionService = config.services.find(
-    (service: any) => service.id === 'streamfusion'
+    (service) => service.id === 'streamfusion'
   );
   if (!streamFusionService) {
     throw new Error('StreamFusion service not found');
