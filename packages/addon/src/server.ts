@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 
 import path from 'path';
-import { AIOStreams } from './addon';
+import { AIOStreams } from './addon.js';
 import { Config, StreamRequest } from '@aiostreams/types';
 import { validateConfig } from './config';
 import manifest from './manifest';
