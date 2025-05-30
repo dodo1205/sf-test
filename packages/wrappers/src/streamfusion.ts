@@ -67,6 +67,7 @@ export class StreamFusion extends BaseWrapper {
    */
   private isTorrentingEnabled(): boolean {
     // Vérifier si le type de stream p2p est activé
+    // @ts-ignore: Parameter 'streamType' implicitly has an 'any' type
     const p2pEnabled = this.userConfigRef.streamTypes.some(streamType => {
       return streamType['p2p'] === true;
     });
@@ -121,6 +122,7 @@ export class StreamFusion extends BaseWrapper {
     // Si l'utilisateur a des langues prioritaires définies, les utiliser
     if (this.userConfigRef.prioritisedLanguages && this.userConfigRef.prioritisedLanguages.length > 0) {
       // Convertir les codes de langue au format attendu par StreamFusion
+      // @ts-ignore: Parameter 'lang' implicitly has an 'any' type
       const priorityLanguages = this.userConfigRef.prioritisedLanguages.map(lang => {
         // Convertir les codes de langue (par exemple, "French" -> "fr", "English" -> "en", etc.)
         switch (lang.toLowerCase()) {
@@ -141,6 +143,7 @@ export class StreamFusion extends BaseWrapper {
       });
       
       // Ajouter les langues prioritaires à la liste
+      // @ts-ignore: Parameter 'lang' implicitly has an 'any' type
       priorityLanguages.forEach(lang => {
         if (!languagesList.includes(lang)) {
           languagesList.push(lang);
@@ -159,6 +162,7 @@ export class StreamFusion extends BaseWrapper {
     const exclusionList: string[] = ["cam", "unknown"];
     
     // Parcourir les résolutions dans la configuration utilisateur
+    // @ts-ignore: Parameter 'resolution' implicitly has an 'any' type
     this.userConfigRef.resolutions.forEach(resolution => {
       // Chaque résolution est un objet avec une seule clé (le nom de la résolution) et une valeur booléenne
       const resolutionName = Object.keys(resolution)[0];
@@ -180,14 +184,16 @@ export class StreamFusion extends BaseWrapper {
    */
   private generateStreamFusionConfig(): any {
     // Trouver le service StreamFusion dans la configuration de l'utilisateur
+    // @ts-ignore: Parameter 'service' implicitly has an 'any' type
     const streamFusionService = this.userConfigRef.services.find(
       (service) => service.id === 'streamfusion'
     );
 
     // Trouver les services de débridage activés
+    // @ts-ignore: Parameter 'service' implicitly has an 'any' type
     const enabledDebridServices = this.userConfigRef.services.filter(
-      (service) => 
-        service.enabled && 
+      (service) =>
+        service.enabled &&
         ['realdebrid', 'premiumize', 'alldebrid', 'torrentio'].includes(service.id)
     );
 
@@ -387,6 +393,7 @@ export async function getStreamFusionStreams(
   streamRequest: StreamRequest,
   addonId: string
 ): Promise<{ addonStreams: ParsedStream[]; addonErrors: string[] }> {
+  // @ts-ignore: Parameter 'service' implicitly has an 'any' type
   const streamFusionService = config.services.find(
     (service) => service.id === 'streamfusion'
   );
