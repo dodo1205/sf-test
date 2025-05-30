@@ -1,0 +1,25 @@
+# Docs version changelog:
+
+To push docs deployment action commit must start with `Docs(deploy):` prefix and changelog must be update.
+
+## v1.0.0
+- Initial release
+## v1.0.1
+- Fix: ...
+## v1.0.2
+- Fix: ...
+## v1.0.3
+- Fix: language switcher
+## v1.0.4
+- Fix: docker-compose cmd
+## v1.1.0
+- Add: Catalogs plugin
+- Add: Trakt plugin
+- Add: Manager plugin
+## v1.1.1
+- Fix: replace all the Plugin with Addon
+- Fix: Step in tab-bar
+## v1.1.2
+- Fix: add-on to addon
+## v1.1.3
+- Fix: nav bar
