@@ -1,6 +1,7 @@
 {
   "name": "@aiostreams/addon",
   "version": "1.21.1",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "test": "vitest run --passWithNoTests",
