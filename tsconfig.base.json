@@ -10,6 +10,12 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@aiostreams/types": ["packages/types/src"],
+      "@aiostreams/parser": ["packages/parser/src"],
+      "@aiostreams/utils": ["packages/utils/src"]
+    }
   }
 }
