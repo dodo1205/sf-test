@@ -10,7 +10,16 @@ import {
 } from 'crypto';
 import { deflateSync, inflateSync } from 'zlib';
 import { Settings } from './settings';
-const JSONCrush = import('jsoncrush');
+interface JSONCrushModule {
+  crush(data: string): string;
+  uncrush(data: string): string;
+  default?: {
+    crush(data: string): string;
+    uncrush(data: string): string;
+  };
+}
+
+const JSONCrush = import('jsoncrush') as Promise<JSONCrushModule>;
 import { createLogger } from './logger';
 
 const logger = createLogger('crypto');
@@ -55,8 +64,8 @@ const unpad = (data: Buffer): Buffer => {
 
 export const crushJson = async (data: string): Promise<string> => {
   const module = await JSONCrush;
-  // Assuming jsoncrush exports a default object or named exports
-  if (typeof module.default === 'object' && module.default.crush) {
+  // Use type assertion to ensure TypeScript accepts the method
+  if (module.default && typeof module.default.crush === 'function') {
     return module.default.crush(data);
   }
   return module.crush(data);
@@ -64,8 +73,8 @@ export const crushJson = async (data: string): Promise<string> => {
 
 export const uncrushJson = async (data: string): Promise<string> => {
   const module = await JSONCrush;
-  // Assuming jsoncrush exports a default object or named exports
-  if (typeof module.default === 'object' && module.default.uncrush) {
+  // Use type assertion to ensure TypeScript accepts the method
+  if (module.default && typeof module.default.uncrush === 'function') {
     return module.default.uncrush(data);
   }
   return module.uncrush(data);
