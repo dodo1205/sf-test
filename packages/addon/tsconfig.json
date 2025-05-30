@@ -4,7 +4,9 @@
     "rootDir": "src",
     "outDir": "dist",
     "resolveJsonModule": true,
-    "module": "esnext"
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "preserveSymlinks": true
   },
   "references": [
     {
