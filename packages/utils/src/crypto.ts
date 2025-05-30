@@ -55,11 +55,19 @@ const unpad = (data: Buffer): Buffer => {
 
 export const crushJson = async (data: string): Promise<string> => {
   const module = await JSONCrush;
+  // Assuming jsoncrush exports a default object or named exports
+  if (typeof module.default === 'object' && module.default.crush) {
+    return module.default.crush(data);
+  }
   return module.crush(data);
 };
 
 export const uncrushJson = async (data: string): Promise<string> => {
   const module = await JSONCrush;
+  // Assuming jsoncrush exports a default object or named exports
+  if (typeof module.default === 'object' && module.default.uncrush) {
+    return module.default.uncrush(data);
+  }
   return module.uncrush(data);
 };
 
