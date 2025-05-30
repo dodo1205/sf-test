@@ -45,7 +45,7 @@ import {
   compileRegex,
   formRegexFromKeywords,
 } from '@aiostreams/utils';
-import { errorStream } from './responses';
+import { errorStream } from './responses.js';
 import { isMatch } from 'super-regex';
 
 const logger = createLogger('addon');
